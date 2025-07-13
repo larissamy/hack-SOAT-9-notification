@@ -1,0 +1,3 @@
+com\hack_SOAT_9\notification_service\NotificationServiceApplication.class
+com\hack_SOAT_9\notification_service\consumer\ErrorNotificationListener.class
+com\hack_SOAT_9\notification_service\domain\ErrorNotificationMessage.class
