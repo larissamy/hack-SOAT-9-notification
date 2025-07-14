@@ -1,6 +1,7 @@
 package com.hack_SOAT_9.notification_service.consumer;
 
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Component;
@@ -14,7 +15,11 @@ public class ErrorNotificationListener {
     private final String from;
     private final String subject;
 
-    public ErrorNotificationListener(JavaMailSender mailSender, String from, String subject) {
+    public ErrorNotificationListener(
+            JavaMailSender mailSender,
+            @Value("${notification.email.from}") String from,
+            @Value("${notification.email.subject}") String subject
+    ) {
         this.mailSender = mailSender;
         this.from = from;
         this.subject = subject;
