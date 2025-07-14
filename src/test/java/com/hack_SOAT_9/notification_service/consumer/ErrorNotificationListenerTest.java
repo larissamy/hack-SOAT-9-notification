@@ -1,11 +1,13 @@
 package com.hack_SOAT_9.notification_service.consumer;
 
-import com.hack_SOAT_9.notification_service.domain.ErrorNotificationMessage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
@@ -23,7 +25,9 @@ public class ErrorNotificationListenerTest {
 
     @Test
     public void shouldSendEmailWhenErrorMessageReceived() {
-        ErrorNotificationMessage message = new ErrorNotificationMessage("jon@email.com", "Erro no processamento");
+        Map<String, String> message = new HashMap<>();
+        message.put("email", "jon@email.com");
+        message.put("errorMessage", "Erro no processamento");
 
         listener.handleError(message);
 

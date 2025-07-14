@@ -1,10 +1,11 @@
 package com.hack_SOAT_9.notification_service.consumer;
 
-import com.hack_SOAT_9.notification_service.domain.ErrorNotificationMessage;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Component;
+
+import java.util.Map;
 
 @Component
 public class ErrorNotificationListener {
@@ -13,26 +14,23 @@ public class ErrorNotificationListener {
     private final String from;
     private final String subject;
 
-    public ErrorNotificationListener(JavaMailSender mailSender,
-                                     @org.springframework.beans.factory.annotation.Value("${notification.email.from}") String from,
-                                     @org.springframework.beans.factory.annotation.Value("${notification.email.subject}") String subject) {
+    public ErrorNotificationListener(JavaMailSender mailSender, String from, String subject) {
         this.mailSender = mailSender;
         this.from = from;
         this.subject = subject;
     }
 
-    @RabbitListener(queues = "${notification.error.queue:video.error.queue}")
-    public void handleError(ErrorNotificationMessage message) {
-        sendEmail(message);
-    }
+    @RabbitListener(queues = "notification.errors")
+    public void handleError(Map<String, String> message) {
+        String email = message.get("email");
+        String errorMessage = message.get("errorMessage");
 
-    private void sendEmail(ErrorNotificationMessage message) {
-        SimpleMailMessage email = new SimpleMailMessage();
-        email.setTo(message.getEmail());
-        email.setFrom(from);
-        email.setSubject(subject);
-        email.setText("Olá!\n\nHouve um erro no processamento do seu vídeo:\n\n" +
-                      message.getErrorMessage() + "\n\nTente novamente..");
-        mailSender.send(email);
+        SimpleMailMessage mail = new SimpleMailMessage();
+        mail.setTo(email);
+        mail.setFrom(from);
+        mail.setSubject(subject);
+        mail.setText("Erro no processamento do vídeo:\n\n" + errorMessage);
+
+        mailSender.send(mail);
     }
 }
